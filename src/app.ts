@@ -21,11 +21,25 @@ const LoggerFactory = (logString: string) => {
     }
 }
 
+// Another Factory Class Decorator, with a more useful example
+const withTemplate = (template: string, hookId: string) => {
+    // Here again we can tell Typescript: We know we get a function argument, but we don't want to use it
+    // we indicate this with the underscore. Now TSC won't error due to an unused variable
+    return (_: Function) => {
+        // Insert the template into a target element in the DOM
+        const targetElem = document.getElementById(hookId);
+        if (targetElem) {
+            targetElem.innerHTML = template;
+        }
+    }
+}
+
 // When you add the function in this way TS will know that you mean to use it as a decorator and apply the proper syntax checks
 // - @Logger: Plain Decorator
 // - @LoggerFactory: A constructor-decorator. It has to be executed, so add the parenthesis here
 @Logger
 @LoggerFactory('Logging the Person Object')
+@withTemplate('<h1>My Person Object</h1>', 'app')
 class Person {
     name = "Morne";
 
