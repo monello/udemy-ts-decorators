@@ -10,12 +10,12 @@ const Logger = (constructor: Function) => {
 
 // A factory decorator return a function
 // This allows us to pass in our own variables to the main decorator functiomn
-const LoggerFactory = () => {
+const LoggerFactory = (logString: string) => {
     // - Decorators get passed different arguments depending on where you use it
     // - This will be a class decorator so it only receives 1 argument
     // - The argument here is a pointer to the constructor function of the target-class (the class you are applying the decorator to)
     return (constructor: Function) => {
-        console.log('Logging...');
+        console.log(logString);
         // Now that the argument is added to the function, we are now able to use this as a decorator
         console.log(constructor);
     }
@@ -25,7 +25,7 @@ const LoggerFactory = () => {
 // - @Logger: Plain Decorator
 // - @LoggerFactory: A constructor-decorator. It has to be executed, so add the parenthesis here
 @Logger
-@LoggerFactory()
+@LoggerFactory('Logging the Person Object')
 class Person {
     name = "Morne";
 
