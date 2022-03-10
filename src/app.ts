@@ -23,13 +23,18 @@ const LoggerFactory = (logString: string) => {
 
 // Another Factory Class Decorator, with a more useful example
 const withTemplate = (template: string, hookId: string) => {
-    // Here again we can tell Typescript: We know we get a function argument, but we don't want to use it
-    // we indicate this with the underscore. Now TSC won't error due to an unused variable
-    return (_: Function) => {
+    // Here we had to change the argument type to any in order to use the "new" keyword below
+    // TS does not know that the Function being passed is a valid constructor function, so we need to go very wide
+    //  on our typing here and set it to any
+    return (constructor: any) => {
         // Insert the template into a target element in the DOM
         const targetElem = document.getElementById(hookId);
+        // Here we can instantiate (use the new-keyword) a person object from the constructor function
+        const person = new constructor();
         if (targetElem) {
             targetElem.innerHTML = template;
+            // interact with the element (template) that was inserted in the previous line
+            targetElem.querySelector('h1')!.textContent = person.name;
         }
     }
 }
