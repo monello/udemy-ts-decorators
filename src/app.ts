@@ -148,3 +148,6 @@ class Product {
         return this._price * (1 + tax);
     }
 }
+
+const product1 = new Product('product1', 10);
+const product2 = new Product('product2', 20);
