@@ -82,6 +82,18 @@ const PropertyLogger = (target: any, propertyName: string | Symbol) => {
     console.log("propertyName:", propertyName);
 }
 
+// This is an example of an accessor decorator - will be decorating either a getter or a setter method
+// Accessor Decoratos arguments:
+// 'target` - The same description as for the Proprty Decorator (above)
+// 'name' - This will hold the name of the accessor method
+// 'descriptor` - The PropertyDescriptor (a type that comes with TS)
+const accessorDecorator = (target: any, name: string, descriptor: PropertyDescriptor) => {
+    console.warn('Hello from "decorator" Accessor Decorator')
+    console.log("target:", target);
+    console.log("name:", name);
+    console.log("descriptor:", descriptor);
+}
+
 // This class was created to demonstrate property decorators, accessor decorators and method decorators
 class Product {
     @PropertyLogger
@@ -97,6 +109,7 @@ class Product {
 
     // accessors are special methods that can be used to safely set and get private class properties
     // setter (accessor method)
+    @accessorDecorator
     set price(val: number) {
         if (val > 0) {
             this._price = val;
