@@ -1,5 +1,7 @@
 # udemy-ts-decorators
-The project code from the Udemy course. The section on decorators
+The project code from the Udemy course. The section on decorators.
+
+Course by [Maximilian Schwarzmüller](https://www.udemy.com/user/maximilian-schwarzmuller/) | [Understanding typeScript - 2022 Edition](https://www.udemy.com/share/101sTi3@txHQIZUbxFrEWZRvwzklQTDchIc2f_t0A4JBHVRlwzCrfVl9zudwrfkDhRllkFZ-/)
 
 # Code Progression notes
 
