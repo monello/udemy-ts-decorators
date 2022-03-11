@@ -63,3 +63,29 @@ class Person {
 const pers = new Person();
 
 console.log(pers);
+
+// This class was created to demonstrate property decorators, accessor decorators and method decorators
+class Product {
+    title: string;
+    private _price: number;
+
+    constructor(t: string, p: number) {
+        this.title = t;
+        this._price = p;
+    }
+
+    // accessors are special methods that can be used to safely set and get private class properties
+    // setter (accessor method)
+    set price(val: number) {
+        if (val > 0) {
+            this._price = val;
+        } else {
+            throw new Error('Invalid price - should be positive!');
+        }
+    }
+
+    // basic class method
+    getPriceWithTax(tax: number) {
+        return this._price * (1 + tax);
+    }
+}
