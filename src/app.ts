@@ -31,12 +31,12 @@ const withTemplate = (template: string, hookId: string) => {
     // Here we had to change the argument type to any in order to use the "new" keyword below
     // TS does not know that the Function being passed is a valid constructor function, so we need to go very wide
     //  on our typing here and set it to any
-    return (origConstructor: any) => {
+    return <T extends { new(...args: any[]): { name: string } }>(origConstructor: T) => {
         console.warn('Hello from "decorator" withTemplate decorator');
         // create a new class on-the-fly and extend the constructor that was passed in
         // extending this constructor ensures we can keep all the set-up of the this original constuctot
         return class extends origConstructor {
-            constructor() {
+            constructor(..._: any[]) {
                 // This calls the constructor of the origConstructor
                 super();
                 console.warn("Hello from the new class");
