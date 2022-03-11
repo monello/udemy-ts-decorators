@@ -64,9 +64,30 @@ const pers = new Person();
 
 console.log(pers);
 
+// -------------------------------------------------------------------------------------------------------
+
+// This is an example of a Property Decorator
+// In classes you can have two different types of properties: static or "instance" properties
+// - Static properties are defined with a preceding 'static' keyword
+// - Instance properties are the normal properties on the class instance (without the static-keyword)
+// Property decorator paramaters:
+// 'target' - for an instance property it will be the prototype of the property,
+//            if it is a static property target will refer to the construtor function
+//            It is typed as 'any' as TSC won't know if we intend to use this decorator on an instance-
+//            or a static-property
+// 'propertName' - Self explanatory
+const PropertyLogger = (target: any, propertyName: string | Symbol) => {
+    console.warn('Hello from "decorator" Property decorator');
+    console.log("target:", target);
+    console.log("propertyName:", propertyName);
+}
+
 // This class was created to demonstrate property decorators, accessor decorators and method decorators
 class Product {
+    @PropertyLogger
     title: string;
+    @PropertyLogger
+    static foobar: string;
     private _price: number;
 
     constructor(t: string, p: number) {
