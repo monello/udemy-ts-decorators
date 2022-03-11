@@ -97,13 +97,25 @@ const AccessorDecorator = (target: any, name: string, descriptor: PropertyDescri
 // This is an example of a Method Decorator - will be used to decorate class methods
 // Method decorator arguments:
 // 'target` - The same description as for the Property Decorator (above)
-// 'name' - This will hold the name of the accessor method
+// 'name' - This will hold the name of the method
 // 'descriptor` - The PropertyDescriptor (a type that comes with TS)
 const MethodDecorator = (target: any, name: string, descriptor: PropertyDescriptor) => {
     console.warn('Hello from "decorator" Method Decorator')
     console.log("target:", target);
     console.log("name:", name);
     console.log("descriptor:", descriptor);
+}
+
+// This is an example of a Parameter Decorator - this will be used to decorate method parameters
+// Parameter decorator arguments
+// 'target` - The same description as for the Property Decorator (above)
+// 'name' - The name of the method of which this parameter is an argument (so not the parameter name)
+// 'position' - The position (index, zero-based) of the argument in the arguments list of the method
+const ParameterDecorator = (target: any, name: string, position: number) => {
+    console.warn('Hello from "decorator" Parameter Decorator')
+    console.log("target:", target);
+    console.log("name:", name);
+    console.log("position:", position);
 }
 
 // This class was created to demonstrate property decorators, accessor decorators and method decorators
@@ -122,7 +134,7 @@ class Product {
     // accessors are special methods that can be used to safely set and get private class properties
     // setter (accessor method)
     @AccessorDecorator
-    set price(val: number) {
+    set price(@ParameterDecorator val: number) {
         if (val > 0) {
             this._price = val;
         } else {
@@ -132,7 +144,7 @@ class Product {
 
     // basic class method
     @MethodDecorator
-    getPriceWithTax(tax: number) {
+    getPriceWithTax(@ParameterDecorator tax: number) {
         return this._price * (1 + tax);
     }
 }
