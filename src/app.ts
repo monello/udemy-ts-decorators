@@ -75,7 +75,7 @@ console.log(pers);
 //            if it is a static property target will refer to the construtor function
 //            It is typed as 'any' as TSC won't know if we intend to use this decorator on an instance-
 //            or a static-property
-// 'propertName' - Self explanatory
+// 'propertyName' - Self explanatory
 const PropertyLogger = (target: any, propertyName: string | Symbol) => {
     console.warn('Hello from "decorator" Property decorator');
     console.log("target:", target);
@@ -84,11 +84,23 @@ const PropertyLogger = (target: any, propertyName: string | Symbol) => {
 
 // This is an example of an accessor decorator - will be decorating either a getter or a setter method
 // Accessor Decoratos arguments:
-// 'target` - The same description as for the Proprty Decorator (above)
+// 'target` - The same description as for the Property Decorator (above)
 // 'name' - This will hold the name of the accessor method
 // 'descriptor` - The PropertyDescriptor (a type that comes with TS)
-const accessorDecorator = (target: any, name: string, descriptor: PropertyDescriptor) => {
+const AccessorDecorator = (target: any, name: string, descriptor: PropertyDescriptor) => {
     console.warn('Hello from "decorator" Accessor Decorator')
+    console.log("target:", target);
+    console.log("name:", name);
+    console.log("descriptor:", descriptor);
+}
+
+// This is an example of a Method Decorator - will be used to decorate class methods
+// Method decorator arguments:
+// 'target` - The same description as for the Property Decorator (above)
+// 'name' - This will hold the name of the accessor method
+// 'descriptor` - The PropertyDescriptor (a type that comes with TS)
+const MethodDecorator = (target: any, name: string, descriptor: PropertyDescriptor) => {
+    console.warn('Hello from "decorator" Method Decorator')
     console.log("target:", target);
     console.log("name:", name);
     console.log("descriptor:", descriptor);
@@ -109,7 +121,7 @@ class Product {
 
     // accessors are special methods that can be used to safely set and get private class properties
     // setter (accessor method)
-    @accessorDecorator
+    @AccessorDecorator
     set price(val: number) {
         if (val > 0) {
             this._price = val;
@@ -119,6 +131,7 @@ class Product {
     }
 
     // basic class method
+    @MethodDecorator
     getPriceWithTax(tax: number) {
         return this._price * (1 + tax);
     }
