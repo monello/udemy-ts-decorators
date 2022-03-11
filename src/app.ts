@@ -161,16 +161,44 @@ const product2 = new Product('product2', 20);
 
 // -------------------------------------------------------------------------------------------------------
 
+const AutoBind = (_: any, _1: string, descriptor: PropertyDescriptor) => {
+    console.log("descriptor: ", descriptor);
+    const origMethod = descriptor.value;
+    const adjDescriptor: PropertyDescriptor = {
+        configurable: true,
+        enumerable: false,
+        // So in our new descriptor we set a getter instead of trying to override the function contained "value"
+        // Getters also set the value of the PropertyDescriptor (when you implement) the decorator JS will know
+        //   to use the getter, because there won't be (and cannot be) a value and getter on a PropertyDescriptor
+        // at the same time.
+        // The reason a getter was picked is because it has the correct context for the this-keyword (the class the
+        // method being decorated) belongs to.
+        // Now this gives uf the opprtunity to bind the this as before end return the adjusted function as the value
+        get() {
+            const boundFn = origMethod.bind(this);
+            return boundFn;
+        }
+    }
+    return adjDescriptor;
+}
+
 class Printer {
     message = 'This works';
 
+    @AutoBind
     showMessage() {
         console.log(this.message);
-
     }
+
+    // Just a thing to note: If you use an arrow function, there is no need for an autobind decorator.
+    // Arrow function handle the this keyword in the correct way that the traditional functions don't.
+    // This is, in fact, one of the main problems arrow-functions were introduced to solve.
+    // showMessage = () => {
+    //     console.log("two:", this.message);
+    // }
 }
 
 const printer = new Printer();
 
 const button = document.querySelector('button')!;
-button.addEventListener('click', printer.showMessage.bind(printer));
+button.addEventListener('click', printer.showMessage);
