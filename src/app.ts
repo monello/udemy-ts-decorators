@@ -157,3 +157,20 @@ class Product {
 
 const product1 = new Product('product1', 10);
 const product2 = new Product('product2', 20);
+
+
+// -------------------------------------------------------------------------------------------------------
+
+class Printer {
+    message = 'This works';
+
+    showMessage() {
+        console.log(this.message);
+
+    }
+}
+
+const printer = new Printer();
+
+const button = document.querySelector('button')!;
+button.addEventListener('click', printer.showMessage.bind(printer));
