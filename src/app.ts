@@ -31,17 +31,23 @@ const withTemplate = (template: string, hookId: string) => {
     // Here we had to change the argument type to any in order to use the "new" keyword below
     // TS does not know that the Function being passed is a valid constructor function, so we need to go very wide
     //  on our typing here and set it to any
-    return (constructor: any) => {
+    return (origConstructor: any) => {
         console.warn('Hello from "decorator" withTemplate decorator');
-
-        // Insert the template into a target element in the DOM
-        const targetElem = document.getElementById(hookId);
-        // Here we can instantiate (use the new-keyword) a person object from the constructor function
-        const person = new constructor();
-        if (targetElem) {
-            targetElem.innerHTML = template;
-            // interact with the element (template) that was inserted in the previous line
-            targetElem.querySelector('h1')!.textContent = person.name;
+        // create a new class on-the-fly and extend the constructor that was passed in
+        // extending this constructor ensures we can keep all the set-up of the this original constuctot
+        return class extends origConstructor {
+            constructor() {
+                // This calls the constructor of the origConstructor
+                super();
+                console.warn("Hello from the new class");
+                // Insert the template into a target element in the DOM
+                const targetElem = document.getElementById(hookId);
+                if (targetElem) {
+                    targetElem.innerHTML = template;
+                    // interact with the element (template) that was inserted in the previous line
+                    targetElem.querySelector('h1')!.textContent = this.name;
+                }
+            }
         }
     }
 }
