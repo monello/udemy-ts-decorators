@@ -202,3 +202,36 @@ const printer = new Printer();
 
 const button = document.querySelector('button')!;
 button.addEventListener('click', printer.showMessage);
+
+
+class Course {
+    title: string;
+    price: number;
+
+    constructor(t: string, p: number) {
+        this.title = t;
+        this.price = p;
+    }
+}
+
+const courseForm = document.querySelector('form')!;
+courseForm.addEventListener('submit', event => {
+    event.preventDefault();
+    // Just a quick reminder that there are 2 ways to type=cast a variable:
+    // 1. the angle-braclets in front <Type> or
+    // 2. the "as" clause at the end
+    // Also note that the null-assertion operator is not required if you typse-cast
+    // const title = <HTMLInputElement> document.getElementById('title');
+    const titleElem = document.getElementById('title') as HTMLInputElement;
+    const priceElem = document.getElementById('price') as HTMLInputElement;
+
+    const title = titleElem.value;
+    const price = +priceElem.value;
+
+    // use the values to instantiate the course
+    var createdCourse = new Course(title, price);
+
+    // log the course object to console to see what it looks like at this stage
+    console.log(createdCourse);
+
+})
