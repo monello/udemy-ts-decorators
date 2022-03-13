@@ -203,9 +203,114 @@ const printer = new Printer();
 const button = document.querySelector('button')!;
 button.addEventListener('click', printer.showMessage);
 
+// -------------------------------------------------------------------------------------------------------
+
+// The plan the lecturer has is to create decorators that validate specifiv things, like required, positive-number etc
+// These decorators can then be applied to the fields and you can apply multple decorators to a single field too.
+// These decorators don't contain the validation logic, because that would run (as we've seen before) when the class is declared
+//    nor when the class is instantiated (which would still be too early enyway) neither when the form is submitted -which is when
+//    we actually want them to run.
+//    So the code that does the validation should be somewhere else where we have the control to make it run on-submit
+// What these decorators will be doing is register a field and all the validation that is applied to it in a global Validation Registry
+//    and to do this in decorators is great as this is done "early" (decorators run before any other code, when the class is declared
+//    in the code)
+// This registry will then have a "log" of each field that needs validation applied to it and the types of validation to apply to each field
+// So one field might just need to not be empty (required), but another might have to be required AND be a positive number.
+// You should be able to see by not that this might require a more code and set-up up-front, but would be a much more generic, re-usable,
+//    maintainable and more elegant way to handle validation. Another benefit is that you can just more all validation rules into a seperate
+//    Module and then your code handling the form submit logic would be nice a clean too.
+// So to validate the course title you can just decorate it with a @Required decorator, but the price might need to rules @Required and @PositiveNumber
+// The function that then loops through the registry (basically a list of fields that needs validation), then takes each field at a time,
+//    checks what validation rules was registered for the field and then applies the rule.
+// This function could be called "validate" for example, and simply be called from or form's on-submit event-handler
+
+
+// This interface will be used as a "custom type" to set the rules for the structure of the ValidationRegister and
+//   the fields & their rules
+// The registry structure for this form (the one dealt with in the course) will look like this:
+/*
+    'Course': {                                 // The name of the class that has fields to be validated
+        'title': ['required],                   // The field (class-property) and a list of strings describing the rules
+        'price': ['required', 'positive']
+    }
+*/
+interface ValidatorConfig {
+    // example use of the TS "Interface" type:
+    [validateableClass: string]: {
+        [validateableProp: string]: string[]
+    }
+}
+
+// This will be the global validation Register
+// It can be used for other classes and as can be seen from the interface above, it can hold multiple classes
+// For this example it will only hold the validation rules for the Course class and it's fields
+const validationRegister: ValidatorConfig = {};
+
+
+// The decorators will be used to register the class + field + rule in the registry.
+// Each decorator registers only 1 rules at a time
+
+// This is a property decorator so it receives these arguments:
+// 'target' - for an "instance" property it will be the prototype of the property,
+//            if it is a "static" property target will refer to the construtor function
+//            It is typed as 'any' as TSC won't know if we intend to use this decorator on an instance-
+//            or a static-property
+// 'propertName' - Self explanatory
+const Required = (target: any, propName: string) => {
+    // Register the required-rule for the given class & field in the validationRegister
+    validationRegister[target.constructor.name] = {
+        ...validationRegister[target.constructor.name],
+        [propName]: [...(validationRegister[target.constructor.name]?.[propName] ?? []), 'required']
+    };
+};
+const PositiveNumber = (target: any, propName: string) => {
+    // Register the required-rule for the given class & field in the validationRegister
+    validationRegister[target.constructor.name] = {
+        ...validationRegister[target.constructor.name],
+        [propName]: [...(validationRegister[target.constructor.name]?.[propName] ?? []), 'positive']
+    };
+};
+
+// Returns true if all the validation for the given class passes, else returns false if there are validation errors
+const validate = (obj: any) => {
+    console.log(validationRegister);
+    console.log("obj.constructor.name:", obj.constructor.name);
+
+    // Extract the validation config for the given class (object)
+    const objValidationConfig = validationRegister[obj.constructor.name];
+    console.log(objValidationConfig);
+
+
+    // If this class has no properties (fields) registered, then no validation is required, immediately return true
+    if (!objValidationConfig) {
+        return true;
+    }
+
+    let isValid = true;
+    // Loop through all the properties (fields) on this class that have 1 or more validation rules in the register
+    for (const prop in objValidationConfig) {
+        // now loop throug all the rules registered for this prop
+        for (const rule of objValidationConfig[prop]) {
+            // finally, do the validation
+            switch (rule) {
+                case 'required':
+                    isValid = !!obj[prop];   // Use Null-coalescing operator to get Thruthy/Falsy value
+                    break;
+                case 'positive':
+                    isValid = obj[prop] > 0;
+                    break;
+            }
+        }
+    }
+    return isValid;
+}
 
 class Course {
+    @Required
     title: string;
+
+    @Required
+    @PositiveNumber
     price: number;
 
     constructor(t: string, p: number) {
@@ -231,7 +336,13 @@ courseForm.addEventListener('submit', event => {
     // use the values to instantiate the course
     var createdCourse = new Course(title, price);
 
-    // log the course object to console to see what it looks like at this stage
-    console.log(createdCourse);
+    // validate the Course data
+    if (!validate(createdCourse)) {
+        alert('Invalid input, please try again!');
+        return;
+    }
+
+    console.log("createdCourse:", createdCourse);
+
 
 })
