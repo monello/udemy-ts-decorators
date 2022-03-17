@@ -15,7 +15,7 @@ Some commits deal with key learning points, these I will try to list below in th
 2. Install Node.js if you haven't got it installed on your system yet.
 3. In the Terminal run `npm install` in the root dir
 4. Run `npm install -g typescript`
-5. Run `tsc init`
+5. Run `tsc --init`
 6. Run `npm start` (leave it running)
 7. Open a new Terminal and run `tsc -w` (leave it running)
 
